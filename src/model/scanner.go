@@ -58,6 +58,16 @@ func (s *scanner) scanIdentifier() (tok Token, lit string) {
 	return
 }
 
+func (s *scanner) scanString() (tok Token, lit string) {
+	s.next()
+	for s.ch != '"' {
+		lit += string(s.ch)
+		s.next()
+	}
+	s.next()
+	return STRING, lit
+}
+
 // TODO: float
 func (s *scanner) scanNumber() (tok Token, lit string) {
 	for isDigit(s.ch) {
@@ -90,7 +100,7 @@ func isDigit(r rune) bool {
 //
 // In all other cases, Scan returns an empty literal string.
 func (s *scanner) scan() (tok Token, lit string) {
-	// TODOS: scan string, scan float
+	// TODOS: scan float
 	s.skipWhitespace()
 
 	if isLetter(s.ch) {
@@ -105,6 +115,8 @@ func (s *scanner) scan() (tok Token, lit string) {
 		tok = EOF
 	case '#':
 		return s.scanComment()
+	case '"':
+		return s.scanString()
 	case '.':
 		tok = PERIOD
 	case ',':

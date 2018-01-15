@@ -165,7 +165,7 @@ func TestReadTestcase(t *testing.T) {
 	}{
 		{
 			input: `
-			test rightToPhonecall { 
+			test "Right to phonecall" {
 				facts {
 					prisonerVarName : prisoner {
 						age:  23,
@@ -177,7 +177,7 @@ func TestReadTestcase(t *testing.T) {
 				}
 			}`,
 			want: Test{
-				Name: "rightToPhonecall",
+				Name: "Right to phonecall",
 				Facts: []Expression{
 					{Functor: "new",
 						Args: []Node{

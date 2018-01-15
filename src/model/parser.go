@@ -255,7 +255,7 @@ func (p *parser) parseRule() Rule {
 }
 
 func (p *parser) parseTest() Test {
-	testName := p.expect(IDENT)
+	_, testName := p.expectOneOf(IDENT, STRING)
 	t := Test{Name: testName}
 	p.expectSequence(LBRACE, FACTS, LBRACE)
 	for {

@@ -23,9 +23,6 @@ Endgoal:
 	using test-driven development
 	validated by logic programming.
 
-TODO:
-- split out in separate files
-
 */
 
 func main() {
@@ -76,11 +73,11 @@ func main() {
 				p.age >= 18
 			}
 		}
-		test rightToPhonecall {  # TODO: stringparsing and proper names
+		test "Right to phonecall" {
 			facts {
 				p1 : prisoner {
 					age:  23,
-					name: john
+					name: john #string quotes are optional, needed for spaces
 				},
 				p2 : prisoner {
 					age: 15,
