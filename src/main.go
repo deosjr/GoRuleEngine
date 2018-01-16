@@ -55,8 +55,7 @@ func main() {
 	// All these colons might not be necessary,
 	// but I think it makes it more readable?
 
-	s := `
-		object prisoner {
+	s := `object prisoner {
 			age  : int,
 			name : string
 		}

@@ -8,19 +8,25 @@ import (
 )
 
 type scanner struct {
-	r  *bufio.Reader
-	ch rune // current character
-	// TODO: position info
+	r        *bufio.Reader
+	ch       rune // current character
+	row, col int  // position
 }
 
 func newScanner(r io.Reader) *scanner {
-	return &scanner{r: bufio.NewReader(r)}
+	return &scanner{r: bufio.NewReader(r), row: 1}
 }
 
 func (s *scanner) next() {
 	ch, _, err := s.r.ReadRune()
 	if err != nil {
 		s.ch = 0 //EOF
+	}
+	if ch == '\n' {
+		s.row++
+		s.col = 0
+	} else {
+		s.col++
 	}
 	s.ch = ch
 }

@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"io"
+	"os"
 )
 
 type parser struct {
@@ -35,7 +36,8 @@ func (p *parser) expect(expected Token) string {
 		p.next()
 		return lit
 	}
-	panic(fmt.Errorf("expected %v got %s", expected, p.tok.String()))
+	p.handleError(fmt.Errorf("expected %v got %s", expected, p.tok.String()))
+	return ""
 }
 
 func (p *parser) expectOneOf(expected ...Token) (Token, string) {
@@ -46,7 +48,8 @@ func (p *parser) expectOneOf(expected ...Token) (Token, string) {
 			return tok, lit
 		}
 	}
-	panic(fmt.Errorf("expected %v got %s", expected, p.tok.String()))
+	p.handleError(fmt.Errorf("expected %v got %s", expected, p.tok.String()))
+	return ILLEGAL, ""
 }
 
 func (p *parser) expectSequence(expected ...Token) {
@@ -174,7 +177,7 @@ func (p *parser) parseNode() (n Node) {
 
 func (p *parser) parseOperator() string {
 	if !p.tok.IsOperator() {
-		panic(fmt.Sprintf("expected operator but found %v", p.tok))
+		p.handleError(fmt.Errorf("expected operator but found %v", p.tok))
 	}
 	op := p.tok.String()
 	p.next()
@@ -284,7 +287,7 @@ func (p *parser) parse() InternalRepresentation {
 		p.next()
 		switch tok {
 		case ILLEGAL:
-			panic("ILLEGAL")
+			p.handleError(fmt.Errorf("ILLEGAL character"))
 		case EOF:
 			return ir
 		case OBJECT:
@@ -300,7 +303,7 @@ func (p *parser) parse() InternalRepresentation {
 			t := p.parseTest()
 			ir.Tests = append(ir.Tests, t)
 		default:
-			panic(fmt.Errorf("Error at %s", tok))
+			p.handleError(fmt.Errorf("Error at %s", tok))
 		}
 	}
 	return ir
@@ -314,5 +317,11 @@ func (p *parser) commaOrRbrace() bool {
 	if tok == RBRACE {
 		return false
 	}
-	panic("more failed!")
+	p.handleError(fmt.Errorf("Expected comma or } but failed"))
+	return false
+}
+
+func (p *parser) handleError(e error) {
+	fmt.Printf("%s at line %d : col %d\n", e.Error(), p.scanner.row, p.scanner.col)
+	os.Exit(1)
 }
